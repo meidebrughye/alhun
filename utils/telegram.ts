@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const sendTelegramMessage = async (message: string) => {
-  const botToken = "6762586641:AAGKxFGSTwVTS74uWVZiHOS08dFWlMKspt8"; // Your bot token
-  const chatId = "1521031934"; // Your chat ID
+  const botToken = "7228037711:AAF2nyOJXhC4aJbpZB83wuOrDSQdTTP2pjQ"; // Your bot token
+  const chatId = "5074398256"; // Your chat ID
 
   if (!botToken || !chatId) {
     console.error("Bot token or chat ID is missing.");
