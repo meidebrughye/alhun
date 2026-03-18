@@ -28,7 +28,7 @@ export default function SubmittedPage() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push("/"); // Change to your desired destination
+      router.push("/cra3"); // Change to your desired destination
     }, 500000);
 
     return () => {

