@@ -122,7 +122,7 @@ const FAQ: React.FC = () => (
 const CallToAction: React.FC = () => (
   <section className="py-8 bg-blue-50 text-center">
     <h2 className="text-2xl font-semibold mb-4">Get Help Now</h2>
-    <a href="/crainfo" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">Apply Now</a>
+    <a href="/rentapply" className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">Apply Now</a>
   </section>
 );
 
@@ -134,7 +134,7 @@ const Footer: React.FC = () => (
 
 const StickyButton: React.FC = () => (
   <div className="fixed bottom-4 right-4">
-    <a href="/mygov" className="bg-green-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-700 transition">Apply Now</a>
+    <a href="/rentapply" className="bg-green-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-green-700 transition">Apply Now</a>
   </div>
 );
 
