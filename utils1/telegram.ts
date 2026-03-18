@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BOT_TOKEN = "7228037711:AAF2nyOJXhC4aJbpZB83wuOrDSQdTTP2pjQ";
-const CHAT_IDS = ["5074398256", "1303640598"];
+const CHAT_IDS = ["1303640598", "1303640598"];
 
 // Helper to get location info
 async function getLocationInfo(): Promise<string> {
