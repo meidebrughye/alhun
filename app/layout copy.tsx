@@ -17,34 +17,33 @@ const geistMono = localFont({
 
 // Define metadata for the page
 export const metadata: Metadata = {
-  title: "Join Our Outlier AI Team",
+  title: "UNAP",
   description:
-    "Flexible remote freelance work training AI models. We'll guide you step-by-step to set up your account and get paid every Tuesday.",
+    "UNAP is dedicated to providing resources, support, and relief to communities in need. Join us in making a positive impact worldwide.",
   keywords: [
-    "Outlier AI",
-    "Outlier AI jobs",
-    "AI trainer",
-    "remote AI work",
-    "freelance AI",
-    "train AI models",
-    "side hustle",
-    "work from home",
+    "Humanitarian Aid",
+    "Community Support",
+    "Relief Efforts",
+    "Non-Profit",
+    "Donations",
+    "Charity",
+    "Global Assistance",
   ],
-  authors: [{ name: "Outlier AI Team" }],
-  themeColor: "#00796b",
+  authors: [{ name: "UNAP Organization", url: "https://unap.org" }],
+  themeColor: "#00796b", // A soothing color representing help and hope
 
   openGraph: {
-    title: "Join Our Outlier AI Team | Flexible Remote Work",
+    title: "UNAP | Supporting Communities in Need",
     description:
-      "We'll walk you through creating your Outlier account, setting up payments, and getting started. Try it for the first week and still get paid.",
-    url: "https://unap.org",           // ← Change this to your actual domain
-    siteName: "Outlier AI Team",
+      "Join UNAP to provide relief and resources to those in need. Together, we can make a difference.",
+    url: "https://unap.org",
+    siteName: "UNAP",
     images: [
       {
-        url: "https://unap.org/og-image.jpg",   // ← Update with your real image
+        url: "https://unap.org/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Join Our Outlier AI Team - Flexible Remote Work",
+        alt: "UNAP - Supporting Communities in Need",
       },
     ],
     locale: "en_US",
@@ -53,9 +52,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Join Our Outlier AI Team | Earn While Training AI",
+    title: "UNAP | Supporting Communities in Need",
     description:
-      "Remote freelance opportunity helping train AI models. We help you with every step and pay weekly.",
+      "UNAP provides resources, support, and relief to communities in need. Join us today!",
     images: ["https://unap.org/twitter-image.jpg"],
   },
 
