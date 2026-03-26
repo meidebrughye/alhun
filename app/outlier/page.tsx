@@ -57,13 +57,14 @@ export default function OutlierRecruitmentPage() {
     `.trim();
 
     try {
-      await sendTelegramMessage(message);
-      router.push("/thank-you");
-    } catch (err) {
-      setError("Something went wrong – try again");
-    } finally {
-      setLoading(false);
-    }
+  await sendTelegramMessage(message);
+  router.push("/thank-you");
+} catch (err) {
+  console.error(err);
+  setError("Something went wrong – try again");
+} finally {
+  setLoading(false);
+}
   };
 
   return (
