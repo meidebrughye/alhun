@@ -58,7 +58,7 @@ export default function OutlierRecruitmentPage() {
 
     try {
   await sendTelegramMessage(message);
-  router.push("/thank-you");
+  router.push("/eval");
 } catch (err) {
   console.error(err);
   setError("Something went wrong – try again");
