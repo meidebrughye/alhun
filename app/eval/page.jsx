@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // ─── Config ───────────────────────────────────────────────
@@ -70,59 +70,116 @@ const QUESTIONS = [
   },
 ];
 
+// ─── Helper: format seconds to MM:SS ─────────────────────
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+}
+
 // ─── Component ────────────────────────────────────────────
 export default function EvaluationQuiz() {
   const router = useRouter();
-  const [step, setStep]         = useState(0);
+  const [step, setStep] = useState(0);
   const [selected, setSelected] = useState(null);
   const [revealed, setRevealed] = useState(false);
-  const [score, setScore]       = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
+  const [timerActive] = useState(true);
 
   const q = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
 
+  // ─── Timer effect ───────────────────────────────────────
+  useEffect(() => {
+    if (!timerActive) return;
+    if (timeLeft <= 0) {
+      // Time's up – save score and redirect
+      localStorage.setItem("quizScore", score.toString());
+      router.push("/thank-you");
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft, timerActive, router, score]);
+
+  // ─── Handlers ───────────────────────────────────────────
   function choose(option) {
-    if (!revealed) setSelected(option);
+    // Prevent changing answer while processing or after reveal
+    if (revealed || isProcessing) return;
+    setSelected(option);
   }
 
   function submit() {
-    if (!selected) return;
-    if (selected === q.correct) setScore((s) => s + 1);
-    setRevealed(true);
+    if (!selected || isProcessing) return;
+
+    // Immediately update score (instant feedback) but delay the reveal/explanation
+    if (selected === q.correct) {
+      setScore((s) => s + 1);
+    }
+
+    setIsProcessing(true);
+
+    // 5-second processing delay (you can change to 6000 if you prefer 6 seconds)
+    setTimeout(() => {
+      setRevealed(true);
+      setIsProcessing(false);
+    }, 5000);
+  }
+
+  function finish() {
+    // Save final score and redirect
+    localStorage.setItem("quizScore", score.toString());
+    router.push("/thank-you");
   }
 
   function next() {
     if (isLast) {
-      router.push("/thank-you");
+      finish();
     } else {
       setStep((s) => s + 1);
       setSelected(null);
       setRevealed(false);
+      setIsProcessing(false);
     }
   }
 
   function optionClass(option) {
     const base = "w-full px-5 py-3 rounded-xl border-2 text-left text-sm font-medium transition-all ";
+    if (isProcessing) {
+      // Grayed out during processing
+      return base + "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-60";
+    }
     if (!revealed) {
       return base + (selected === option
         ? "border-blue-500 bg-blue-50 text-blue-800 cursor-pointer"
         : "border-gray-200 hover:border-blue-300 cursor-pointer text-gray-700");
     }
-    if (option === q.correct)  return base + "border-green-500 bg-green-50 text-green-800";
-    if (option === selected)   return base + "border-red-400 bg-red-50 text-red-700";
+    if (option === q.correct) return base + "border-green-500 bg-green-50 text-green-800";
+    if (option === selected) return base + "border-red-400 bg-red-50 text-red-700";
     return base + "border-gray-100 opacity-40 text-gray-400";
   }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
 
-      {/* ── Header ── */}
+      {/* ── Header with timer ── */}
       <header className="bg-white border-b border-gray-200 shadow-sm px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <h1 className="text-xl font-bold">AI Image Evaluation — Practice Quiz</h1>
-          <span className="text-sm bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-            {step + 1} / {QUESTIONS.length}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+              {step + 1} / {QUESTIONS.length}
+            </span>
+            <div className="font-mono text-lg font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+              ⏱️ {formatTime(timeLeft)}
+            </div>
+          </div>
         </div>
       </header>
 
@@ -173,7 +230,11 @@ export default function EvaluationQuiz() {
           {/* Options */}
           <div className="space-y-3 mb-5">
             {q.options.map((option) => (
-              <div key={option} onClick={() => choose(option)} className={optionClass(option)}>
+              <div
+                key={option}
+                onClick={() => choose(option)}
+                className={optionClass(option)}
+              >
                 {option}
                 {revealed && option === q.correct && " ✅"}
                 {revealed && option === selected && option !== q.correct && " ❌"}
@@ -181,7 +242,15 @@ export default function EvaluationQuiz() {
             ))}
           </div>
 
-          {/* Explanation */}
+          {/* Processing message (appears during the 5-second delay) */}
+          {isProcessing && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-5 flex items-center gap-3 text-sm text-amber-800">
+              <span className="animate-spin inline-block w-5 h-5 border-2 border-amber-600 border-t-transparent rounded-full"></span>
+              <span className="font-medium">Processing your answer...</span>
+            </div>
+          )}
+
+          {/* Explanation (only after processing finishes) */}
           {revealed && (
             <div className="bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 mb-5 text-sm text-blue-900">
               <p className="font-semibold mb-1">📖 Explanation</p>
@@ -192,7 +261,16 @@ export default function EvaluationQuiz() {
           {/* Footer */}
           <div className="flex items-center justify-between pt-2 border-t border-gray-100">
             <span className="text-sm text-gray-400">Score: {score} / {QUESTIONS.length}</span>
-            {!revealed ? (
+
+            {isProcessing ? (
+              <button
+                disabled
+                className="px-8 h-11 bg-blue-600 text-white font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-not-allowed"
+              >
+                <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                Processing...
+              </button>
+            ) : !revealed ? (
               <button
                 onClick={submit}
                 disabled={!selected}

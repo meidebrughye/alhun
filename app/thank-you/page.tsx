@@ -5,90 +5,149 @@ import { useRouter } from "next/navigation";
 
 export default function ThankYouPage() {
   const router = useRouter();
-  const [applicationId, setApplicationId] = useState("");
+  const [score, setScore] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Generate random Application ID
   useEffect(() => {
-    const randomNum = Math.floor(100000 + Math.random() * 900000);
-    const id = `OUT-${randomNum}`;
-    setApplicationId(id);
-  }, []);
+    const savedScore = localStorage.getItem("quizScore");
+
+    if (savedScore === null) {
+      router.push("/eval");
+      return;
+    }
+
+    const parsedScore = parseInt(savedScore, 10);
+
+    // Validate score
+    if (isNaN(parsedScore) || parsedScore < 0 || parsedScore > 5) {
+      localStorage.removeItem("quizScore"); // Clear invalid data
+      router.push("/eval");
+      return;
+    }
+
+    setScore(parsedScore);
+    setLoading(false);
+
+    // Optional: Clear score after reading (prevents replay issues)
+    // localStorage.removeItem("quizScore");
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-300 border-t-blue-600 mx-auto" />
+          <p className="mt-6 text-zinc-600">Loading your results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const totalQuestions = 5;
+  const percentage = Math.round(((score ?? 0) / totalQuestions) * 100);
+
+  const getScoreMessage = (score: number) => {
+    switch (score) {
+      case 5:
+        return "Perfect! You’re exceptional.";
+      case 4:
+        return "Excellent work!";
+      case 3:
+        return "Great job!";
+      default:
+        return "Good effort. Keep improving!";
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#f8f1e3] flex items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full text-center">
-        {/* Success Icon */}
-        <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-16 w-16 text-emerald-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="3"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
+    <div className="min-h-screen bg-zinc-50 py-12">
+      <div className="max-w-2xl mx-auto px-6">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100">
+          {/* Hero Section */}
+          <div className="bg-gradient-to-br from-zinc-900 to-black text-white px-10 py-20 text-center relative">
+            <div className="text-6xl mb-6">🎉</div>
 
-        <h1 className="text-5xl font-bold tracking-tighter text-gray-900 mb-3">
-          Thank You!
-        </h1>
+            <h1 className="text-5xl font-bold tracking-tighter mb-3">
+              Congratulations!
+            </h1>
 
-        <p className="text-xl font-medium text-emerald-700 mb-6">
-          Application ID: <span className="font-mono">{applicationId}</span>
-        </p>
+            <p className="text-zinc-400 text-lg mb-10">
+              You’ve completed the AI Image Evaluation
+            </p>
 
-        <div className="bg-white rounded-3xl shadow-lg p-10 mb-10">
-          <div className="space-y-8 text-left">
-            <div>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Your application has been received successfully.
+            {/* Score Display */}
+            <div className="inline-flex items-end gap-3 bg-white/10 backdrop-blur-xl rounded-3xl px-12 py-8">
+              <span className="text-8xl font-bold tabular-nums tracking-tighter">
+                {score}
+              </span>
+              <span className="text-5xl text-zinc-400 font-light">/</span>
+              <span className="text-6xl font-medium text-zinc-300">
+                {totalQuestions}
+              </span>
+            </div>
+
+            <p className="mt-6 text-xl text-zinc-300">
+              {getScoreMessage(score!)}
+            </p>
+          </div>
+
+          {/* Content Area */}
+          <div className="p-10 space-y-9">
+            {/* Percentage */}
+            <div className="text-center">
+              <p className="text-sm uppercase tracking-widest text-zinc-500">
+                Your Score
+              </p>
+              <p className="text-6xl font-semibold text-zinc-900 mt-1">
+                {percentage}%
               </p>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">What to do next:</h3>
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 font-medium">1</div>
-                  <p className="text-gray-600">Go back to the TikTok message/chat where you found this form</p>
+            {/* Bonuses */}
+            <div className="space-y-4">
+              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex gap-5">
+                <div className="text-4xl">🎁</div>
+                <div>
+                  <p className="font-semibold text-lg">Test Completion Bonus</p>
+                  <p className="text-emerald-600">
+                    $50 credited for completing the quiz
+                  </p>
                 </div>
+              </div>
 
-                <div className="flex gap-4">
-                  <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 font-medium">2</div>
-                  <p className="text-gray-600">Message me with your Application ID: <span className="font-mono font-semibold text-gray-900">{applicationId}</span></p>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 font-medium">3</div>
-                  <p className="text-gray-600">I will send you the direct Outlier.ai link right away</p>
+              <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex gap-5">
+                <div className="text-4xl">💼</div>
+                <div>
+                  <p className="font-semibold text-lg">Signing Bonus</p>
+                  <p className="text-amber-600">
+                    $100 after onboarding &amp; payment setup
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-6 border-t border-gray-100">
-              <p className="font-semibold text-gray-900 text-lg">
-                Once you are done please message me on where we were chatting
+            {/* Next Step */}
+            <div className="bg-zinc-900 text-white rounded-2xl p-8 text-center">
+              <p className="text-lg font-medium mb-2">
+                Ready to claim your bonuses?
               </p>
-              <p className="text-sm text-gray-500 mt-2">
-                (Just reply to the TikTok message)
+              <p className="text-zinc-400 mb-6">
+                Complete onboarding to receive your rewards
               </p>
+
+              <button
+                onClick={() => router.push("/onboarding")}
+                className="w-full bg-white text-black font-semibold py-4 rounded-2xl hover:bg-zinc-100 transition-all active:scale-95 text-lg"
+              >
+                Continue to Onboarding →
+              </button>
             </div>
+
+            <p className="text-center text-zinc-500 text-sm">
+              Your progress is saved • You can return anytime
+            </p>
           </div>
         </div>
-
-        <div className="text-gray-600 text-sm leading-relaxed">
-          On Outlier.ai, all payments are sent securely through <strong>Airtm</strong>.<br />
-          No PayPal or bank transfer needed.
-        </div>
-
-        <button
-          onClick={() => router.push("/")}
-          className="mt-12 text-gray-500 hover:text-gray-700 font-medium flex items-center gap-2 mx-auto transition-colors"
-        >
-          ← Back to Application Page
-        </button>
       </div>
     </div>
   );
