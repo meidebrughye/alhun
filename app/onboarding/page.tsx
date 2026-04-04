@@ -75,14 +75,6 @@ export default function OnboardingChecklist() {
       return;
     }
 
-    const emailPattern = /^[a-z]+outlier@gmail\.com$/;
-    if (!emailPattern.test(trimmedEmail)) {
-      setFormError(
-        "Email must follow the format: firstnamelastnameoutlier@gmail.com (e.g. janesmithoutlier@gmail.com)"
-      );
-      return;
-    }
-
     setSending(true);
     try {
       const message = `
